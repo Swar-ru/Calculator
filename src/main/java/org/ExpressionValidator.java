@@ -9,29 +9,61 @@ public class ExpressionValidator {
             return false;
         }
 
-        String cleanedInput = input.replaceAll("\\s+", "");
+        // Удаляем лишние пробелы
+        String trimmedInput = input.trim();
 
-        Pattern pattern = Pattern.compile("^(-?\\d+(?:\\.\\d+)?)([+\\-*/])(-?\\d+(?:\\.\\d+)?)$");
-        Matcher matcher = pattern.matcher(cleanedInput);
+        // Проверка для унарных операций (корень)
+        if (trimmedInput.startsWith("√")) {
+            String numberPart = trimmedInput.substring(1).trim();
+            try {
+                Double.parseDouble(numberPart);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
 
-        return matcher.matches();
+        // Регулярное выражение для поиска операторов с пробелами или без
+        Pattern pattern = Pattern.compile("([-+]?\\d*\\.?\\d+)\\s*([+\\-*/^%])\\s*([-+]?\\d*\\.?\\d+)");
+        Matcher matcher = pattern.matcher(trimmedInput);
+
+        if (matcher.matches()) {
+            try {
+                Double.parseDouble(matcher.group(1));
+                Double.parseDouble(matcher.group(3));
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     public String[] parseExpression(String input) {
+        String trimmedInput = input.trim();
 
-        String cleanedInput = input.replaceAll("\\s+", "");
+        // Обработка унарных операций (корень)
+        if (trimmedInput.startsWith("√")) {
+            String numberPart = trimmedInput.substring(1).trim();
+            return new String[]{"√", numberPart};
+        }
 
-        Pattern pattern = Pattern.compile("^(-?\\d+(?:\\.\\d+)?)([+\\-*/])(-?\\d+(?:\\.\\d+)?)$");
-        Matcher matcher = pattern.matcher(cleanedInput);
+        // Разбор выражений с операторами
+        Pattern pattern = Pattern.compile("([-+]?\\d*\\.?\\d+)\\s*([+\\-*/^%])\\s*([-+]?\\d*\\.?\\d+)");
+        Matcher matcher = pattern.matcher(trimmedInput);
 
         if (matcher.find()) {
             String operand1 = matcher.group(1);
             String operator = matcher.group(2);
             String operand2 = matcher.group(3);
-
             return new String[]{operand1, operator, operand2};
         }
 
         throw new IllegalArgumentException("Не удалось разобрать выражение: " + input);
+    }
+
+    public boolean isUnaryOperation(String operator) {
+        return operator.equals("√");
     }
 }
