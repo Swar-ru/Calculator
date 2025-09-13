@@ -11,20 +11,31 @@ public class Calculator {
         if (!validator.isValidExpression(expression)) {
             throw new IllegalArgumentException("Некорректное выражение. Используйте формат: число оператор число");
         }
-
         String[] parts = validator.parseExpression(expression);
 
         // Обработка унарных операций (корень)
         if (validator.isUnaryOperation(parts[0])) {
-            double operand = Double.parseDouble(parts[1]);
+            return calculateUnaryOperation(parts[0], parts[1]);
+        }
+
+        // Обработка бинарных операций
+        return calculateBinaryOperation(parts[0], parts[1], parts[2]);
+    }
+
+    private double calculateUnaryOperation(String operator, String operandStr) {
+        double operand = Double.parseDouble(operandStr);
+
+        if (operator.equals("sqrt")) {
             SquareRoot squareRoot = new SquareRoot(operand);
             return squareRoot.execute(operand);
         }
 
-        // Обработка бинарных операций
-        double operand1 = Double.parseDouble(parts[0]);
-        double operand2 = Double.parseDouble(parts[2]);
-        String operator = parts[1];
+        throw new IllegalArgumentException("Неизвестная унарная операция: " + operator);
+    }
+
+    private double calculateBinaryOperation(String operand1Str, String operator, String operand2Str) {
+        double operand1 = Double.parseDouble(operand1Str);
+        double operand2 = Double.parseDouble(operand2Str);
 
         Operation operation = createOperation(operand1, operand2, operator);
         return operation.execute();
@@ -49,12 +60,7 @@ public class Calculator {
         }
     }
 
-    // Перегруженный метод для красивого форматирования
-    public String formatResult(double operand1, double operand2, String operator, double result) {
-        return String.format("%.2f %s %.2f = %.2f", operand1, operator, operand2, result);
-    }
-
-    public String formatResult(String operator, double operand, double result) {
-        return String.format("%s %.2f = %.2f", operator, operand, result);
+    public ExpressionValidator getValidator() {
+        return validator;
     }
 }
