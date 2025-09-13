@@ -2,7 +2,6 @@ package org;
 
 public class SquareRoot extends Operation {
     public SquareRoot(double operand1) {
-        // Для корня нужен только один операнд
         super(operand1, 0);
     }
 
@@ -16,7 +15,7 @@ public class SquareRoot extends Operation {
 
     @Override
     public String getOperationSymbol() {
-        return "√";
+        return "sqrt";
     }
 
     // Перегружаем метод для работы с одним операндом

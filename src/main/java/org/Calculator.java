@@ -49,10 +49,6 @@ public class Calculator {
         }
     }
 
-    public String formatResult(String expression, double result) {
-        return String.format("%s = %.2f", expression, result);
-    }
-
     // Перегруженный метод для красивого форматирования
     public String formatResult(double operand1, double operand2, String operator, double result) {
         return String.format("%.2f %s %.2f = %.2f", operand1, operator, operand2, result);

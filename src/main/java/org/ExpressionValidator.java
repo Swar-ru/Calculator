@@ -12,9 +12,13 @@ public class ExpressionValidator {
         // Удаляем лишние пробелы
         String trimmedInput = input.trim();
 
-        // Проверка для унарных операций (корень)
-        if (trimmedInput.startsWith("√")) {
-            String numberPart = trimmedInput.substring(1).trim();
+        // Проверка для унарных операций (корень) - используем "sqrt"
+        if (trimmedInput.startsWith("sqrt")) {
+            String numberPart = trimmedInput.substring(4).trim();
+            // Убедимся, что после sqrt есть число
+            if (numberPart.isEmpty()) {
+                return false;
+            }
             try {
                 Double.parseDouble(numberPart);
                 return true;
@@ -44,9 +48,12 @@ public class ExpressionValidator {
         String trimmedInput = input.trim();
 
         // Обработка унарных операций (корень)
-        if (trimmedInput.startsWith("√")) {
-            String numberPart = trimmedInput.substring(1).trim();
-            return new String[]{"√", numberPart};
+        if (trimmedInput.startsWith("sqrt")) {
+            String numberPart = trimmedInput.substring(4).trim();
+            if (numberPart.isEmpty()) {
+                throw new IllegalArgumentException("После sqrt должно быть число");
+            }
+            return new String[]{"sqrt", numberPart};
         }
 
         // Разбор выражений с операторами
@@ -64,6 +71,6 @@ public class ExpressionValidator {
     }
 
     public boolean isUnaryOperation(String operator) {
-        return operator.equals("√");
+        return operator.equals("sqrt");
     }
 }
